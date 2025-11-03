@@ -34,12 +34,12 @@ python .\fat_tree.py
 
 ## Results and Analysis
 ### 1) Visualization of Fat-Tree Topology
-![Fat-Tree Topology Visualization](readme_figures\visualization_k4_failure20.0.png)
+![Fat-Tree Topology Visualization](https://github.com/ItamarMeir/fat-tree-topology-analysis/blob/main/readme_figures/visualization_k4_failure20.0.png?raw=true)
 
 Each color represents a different pod; core switches are gray. Failed links are shown in red.
 
 ### 2) Average Path Length vs. Link Failure Percentage
-![Average Path Length vs. Link Failure Percentage](readme_figures\avg_path_length_no_path_count_k4_failure20.0.png)
+![Average Path Length and No-Path Count vs. Link Failure (k=4)](https://github.com/ItamarMeir/fat-tree-topology-analysis/blob/main/readme_figures/avg_path_length_no_path_count_k4_failure20.0.png?raw=true)
 
 **Important note: Unreachable host pair paths are excluded from average path length calculations.**
 
@@ -47,8 +47,9 @@ As link failure percentage increases, the number of unreachable host pairs incre
 
 We see a rise in average path length as more links fail, but only until a certain point. Beyond that point, many host pairs become unreachable, causing the average path length to drop (because the calculation excludes these pairs).
 
-### 3) Switches with Multiple Failed Links vs. Switch Port Count (at 1% Link Failure)
-![Switches with Multiple Failed Links vs. Switch Port Count](readme_figures\sw_failed_links_vs_k.png)
+### 3) Switches with Multiple Failed Links and Ratio vs. Switch Port Count
+
+![Switches with Multiple Failed Links vs. Switch Port Count (at 1% Link Failure)](https://github.com/ItamarMeir/fat-tree-topology-analysis/blob/main/readme_figures/sw_failed_links_vs_k.png?raw=true)
 
 **Notes:**
 
@@ -63,7 +64,7 @@ The overall trend is that the ratio of total switches to switches with multiple 
 This indicates that larger Fat-Tree topologies are more susceptible to switches experiencing multiple link failures, which can impact network performance and reliability.
 
 ### 4) Total Hosts Supported vs. Switch Port Count
-![Total Hosts Supported vs. Switch Port Count](readme_figures\total_hosts_supported_vs_k.png)
+![Total Hosts Supported vs. Switch Port Count](https://github.com/ItamarMeir/fat-tree-topology-analysis/blob/main/readme_figures/total_hosts_supported_vs_k.png?raw=true)
 
 The total number of hosts supported in a Fat-Tree topology increases quadratically with the number of ports per switch (k), following the formula: 
 
