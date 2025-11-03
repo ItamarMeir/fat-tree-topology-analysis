@@ -164,10 +164,15 @@ class FatTree:
 				pass
 
 			plt.tight_layout()
-			plt.show()
-
+		
 			# Save the plot as an image file (workspace/figures/visualization_k{self.k}_failure{self.failure_percentage}.png)
 			plt.savefig(f"{self.figures_path}/visualization_k{self.k}_failure{self.failure_percentage}.png")
+			print(f"Figure saved as {self.figures_path}/visualization_k{self.k}_failure{self.failure_percentage}.png")
+
+			# Show the plot
+			plt.show()
+			# Close the plot to free up resources
+			plt.close()
 
 	def verify_correctness(self):
 		# Verify the correctness of the Fat-Tree topology
@@ -233,10 +238,15 @@ class FatTree:
 
 		plt.title(f'Average Path Length and No-Path Count vs. Link Failure Percentage (k={self.k})')
 		plt.tight_layout()
-		plt.show()
 
 		# Save the figure
 		plt.savefig(f"{self.figures_path}/avg_path_length_no_path_count_k{self.k}_failure{failure_percentage}.png")
+		print(f"Figure saved as {self.figures_path}/avg_path_length_no_path_count_k{self.k}_failure{failure_percentage}.png")
+
+		# Show the plot
+		plt.show()
+		# Close the plot to free up resources
+		plt.close()
 
 	def _avg_path_length_link_failure(self, failure_percentage):
 		# Calculate the average path length between all pairs of hosts considering link failures
@@ -310,7 +320,15 @@ class FatTree:
 		plt.title('Switches with Multiple Failed Links vs. Switch Port Count (=k) in Fat-Tree Topology')
 		plt.grid(True, which='both', axis='both', linestyle='--', alpha=0.3)
 		plt.tight_layout()
+
+		# Save the figure
+		plt.savefig(f"{self.figures_path}/sw_failed_links_vs_k.png")
+		print(f"Figure saved as {self.figures_path}/sw_failed_links_vs_k.png")
+
+		# Show the plot
 		plt.show()
+		# Close the plot to free up resources
+		plt.close()
 
 	def plot_total_hosts_supported(self):
 		print("Plotting Total Hosts Supported vs. Number of Port Count (=k)")
@@ -325,10 +343,15 @@ class FatTree:
 		plt.title('Total Hosts Supported vs. Number of Port Count (=k) in Fat-Tree Topology')
 		plt.grid(True, which='both', axis='both', linestyle='--', alpha=0.3)
 		plt.tight_layout()
-		plt.show()
 
 		# Save the figure
 		plt.savefig(f"{self.figures_path}/total_hosts_supported_vs_k.png")
+		print(f"Figure saved as {self.figures_path}/total_hosts_supported_vs_k.png")
+
+		# Show the plot
+		plt.show()
+		# Close the plot to free up resources
+		plt.close()
 
 
 if __name__ == "__main__":
