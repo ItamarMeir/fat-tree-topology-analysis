@@ -2,3 +2,7 @@
 .history/
 __pycache__/
 *.json
+.vscode/
+*.png
+*.jpg
+figures/

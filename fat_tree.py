@@ -5,6 +5,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import random
 from matplotlib.lines import Line2D
+from pathlib import Path
 
 class FatTree:
 	# Initialize the three-tier (Core, Aggregation, Edge) hierarchical Fat-Tree topology with parameter k
@@ -22,6 +23,10 @@ class FatTree:
 		self.verify_correctness()
 		self.base_graph = self.graph.copy() # Keep a copy of the original graph for failure simulations
 		self._failure_model(failure_percentage)
+		
+		# Ensure the figures directory exists
+		self.figures_path = Path("figures")
+		self.figures_path.mkdir(parents=True, exist_ok=True)
 
 	def _build_topology(self):
 		# Create core switches
@@ -106,8 +111,8 @@ class FatTree:
 
 	def visualize(self):
 			# Visualize the Fat-Tree topology using Matplotlib
+			print(f"Visualizing Fat-Tree Topology with k={self.k} and link failure rate of {self.failure_percentage}%")
 			pos = self._hierarchical_pos()
-			types = nx.get_node_attributes(self.graph, 'type')
 
 			# Determine failed links by comparing base_graph (original) with current graph
 			original_edges = set(self.base_graph.edges())
@@ -160,7 +165,10 @@ class FatTree:
 
 			plt.tight_layout()
 			plt.show()
-	
+
+			# Save the plot as an image file (workspace/figures/visualization_k{self.k}_failure{self.failure_percentage}.png)
+			plt.savefig(f"{self.figures_path}/visualization_k{self.k}_failure{self.failure_percentage}.png")
+
 	def verify_correctness(self):
 		# Verify the correctness of the Fat-Tree topology
 		expected_hosts = (self.k ** 3) // 4
@@ -186,6 +194,7 @@ class FatTree:
 	
 	def plot_average_path_length_link_failure(self):
 		# Plot average path length vs. link failure percentage and no-path count on secondary y-axis
+		print(f"Plotting Average Path Length and No-Path Count vs. Link Failure Percentage for k={self.k}")
 		failure_rates = list(range(0, 101, 10))
 		avg_path_lengths = []
 		no_path_counts = []
@@ -222,10 +231,12 @@ class FatTree:
 		labels = [l.get_label() for l in lines]
 		ax1.legend(lines, labels, loc='upper center', bbox_to_anchor=(0.5, -0.05), ncol=2, frameon=False)
 
-		plt.title('Average Path Length and No-Path Count vs. Link Failure Percentage')
+		plt.title(f'Average Path Length and No-Path Count vs. Link Failure Percentage (k={self.k})')
 		plt.tight_layout()
 		plt.show()
 
+		# Save the figure
+		plt.savefig(f"{self.figures_path}/avg_path_length_no_path_count_k{self.k}_failure{failure_percentage}.png")
 
 	def _avg_path_length_link_failure(self, failure_percentage):
 		# Calculate the average path length between all pairs of hosts considering link failures
@@ -267,9 +278,6 @@ class FatTree:
 		num_of_graphs = 10   # Average over multiple graphs for randomness
 		k_values = [4, 6, 8, 10, 12, 14, 16]
 		sw_failed_links = []
-		switch_port_counts = [(k * ((k / 2) ** 2 + k * (k / 2 + k / 2))) for k in k_values] # port counts corresponding to k values (all switches have k ports)
-								# total_port_number = k * ([k/2]^2 + k * (k/2 + k/2))
-								# (k/2)^2 core + k pods * (k/2 agg + k/2 edge) switches
 		for k in k_values:
 			fat_tree = FatTree(k)
 			total_multiple_failed = 0
@@ -288,35 +296,39 @@ class FatTree:
 			avg_multiple_failed = total_multiple_failed / num_of_graphs
 			sw_failed_links.append(avg_multiple_failed)
 			
-		return switch_port_counts, sw_failed_links # x,y values for plotting
+		return k_values, sw_failed_links # x,y values for plotting
 	
 	def plot_sw_failed_links(self):
 		# Plot number of switches with multiple failed links vs. switch port count
-		switch_port_counts, sw_failed_links = self._number_of_sw_failed_links()
-		
+		print("Plotting Switches with Multiple Failed Links vs. Switch Port Count (=k)")
+		k_values, sw_failed_links = self._number_of_sw_failed_links()
+
 		plt.figure(figsize=(10, 6))
-		plt.plot(switch_port_counts, sw_failed_links, marker='o', color='green')
-		plt.xlabel('Switch Port Count')
+		plt.plot(k_values, sw_failed_links, marker='o', color='green')
+		plt.xlabel('Switch Port Count (=k)')
 		plt.ylabel('Number of Switches with ≥2 Failed Links (at 1% failure rate)')
-		plt.title('Switches with Multiple Failed Links vs. Switch Port Count in Fat-Tree Topology')
+		plt.title('Switches with Multiple Failed Links vs. Switch Port Count (=k) in Fat-Tree Topology')
 		plt.grid(True, which='both', axis='both', linestyle='--', alpha=0.3)
 		plt.tight_layout()
 		plt.show()
 
 	def plot_total_hosts_supported(self):
+		print("Plotting Total Hosts Supported vs. Number of Port Count (=k)")
 		# Plot the total number of hosts supported in the Fat-Tree topology as a function of k
 		k_values = list(range(2, 128, 2))  # Even k values from 2 to 128
-		number_of_ports = [(k * ((k / 2) ** 2 + k * (k / 2 + k / 2))) for k in k_values]
 		host_counts = [(k ** 3) // 4 for k in k_values]
 		# Plotting host counts vs. number of ports
 		plt.figure(figsize=(10, 6))
-		plt.plot(number_of_ports, host_counts, marker='o', color='purple')
-		plt.xlabel('Number of Ports per Switch')
+		plt.plot(k_values, host_counts, marker='o', color='purple')
+		plt.xlabel('Number of Port Count')
 		plt.ylabel('Total Number of Hosts Supported')
-		plt.title('Total Hosts Supported vs. Number of Port Count in Fat-Tree Topology')
+		plt.title('Total Hosts Supported vs. Number of Port Count (=k) in Fat-Tree Topology')
 		plt.grid(True, which='both', axis='both', linestyle='--', alpha=0.3)
 		plt.tight_layout()
 		plt.show()
+
+		# Save the figure
+		plt.savefig(f"{self.figures_path}/total_hosts_supported_vs_k.png")
 
 
 if __name__ == "__main__":
