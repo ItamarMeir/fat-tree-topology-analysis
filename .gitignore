@@ -6,3 +6,6 @@ __pycache__/
 *.png
 *.jpg
 figures/
+
+!readme_figures/
+!readme_figures/**

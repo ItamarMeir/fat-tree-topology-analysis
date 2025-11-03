@@ -285,7 +285,7 @@ class FatTree:
 	
 	def _number_of_sw_failed_links(self):
 		# Number of switches with multiple (2 or more) failed links (at a 1% failure rate) as a function of switch port count
-		num_of_graphs = 10   # Average over multiple graphs for randomness
+		num_of_graphs = 100   # Average over multiple graphs for randomness
 		k_values = [4, 6, 8, 10, 12, 14, 16]
 		sw_failed_links = []
 		for k in k_values:
@@ -313,12 +313,32 @@ class FatTree:
 		print("Plotting Switches with Multiple Failed Links vs. Switch Port Count (=k)")
 		k_values, sw_failed_links = self._number_of_sw_failed_links()
 
-		plt.figure(figsize=(10, 6))
-		plt.plot(k_values, sw_failed_links, marker='o', color='green')
-		plt.xlabel('Switch Port Count (=k)')
-		plt.ylabel('Number of Switches with ≥2 Failed Links (at 1% failure rate)')
-		plt.title('Switches with Multiple Failed Links vs. Switch Port Count (=k) in Fat-Tree Topology')
-		plt.grid(True, which='both', axis='both', linestyle='--', alpha=0.3)
+		# Primary axis: number of switches with >=2 failed links
+		fig, ax1 = plt.subplots(figsize=(10, 6))
+		line1, = ax1.plot(k_values, sw_failed_links, marker='o', color='green', label='Switches with ≥2 Failed Links')
+		ax1.set_xlabel('Switch Port Count (=k)')
+		ax1.set_ylabel('Number of Switches with ≥2 Failed Links (at 1% failure rate)', color='green')
+		ax1.tick_params(axis='y', labelcolor='green')
+		ax1.grid(True, which='both', axis='both', linestyle='--', alpha=0.3)
+
+		# Secondary axis: ratio (total switches (=k^3/4)) / (switches with multiple failed links)
+		ratios = []
+		for k, failed in zip(k_values, sw_failed_links):
+			total_switches = (k ** 3) / 4  # as requested
+			ratios.append(total_switches / failed if failed > 0 else float('inf'))
+
+		ax2 = ax1.twinx()
+		line2, = ax2.plot(k_values, ratios, marker='^', color='orange',
+						  label='Ratio: (Total Switches) / ( Switches with ≥2 Failed Links)')
+		ax2.set_ylabel('Ratio: Total Switches / Switches with ≥2 Failed Links', color='orange')
+		ax2.tick_params(axis='y', labelcolor='orange')
+
+		# Combine legends
+		lines = [line1, line2]
+		labels = [l.get_label() for l in lines]
+		ax1.legend(lines, labels, loc='upper center', bbox_to_anchor=(0.5, -0.1), ncol=1, frameon=False)
+
+		plt.title('Switches with Multiple Failed Links and Ratio vs. Switch Port Count (=k)')
 		plt.tight_layout()
 
 		# Save the figure
